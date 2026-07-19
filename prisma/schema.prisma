@@ -1,0 +1,277 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --- ENUMS ---
+
+enum UserRole {
+  owner
+  staff
+}
+
+enum CustomerStatus {
+  new
+  engaged
+  qualified
+  booked
+  converted
+  churned
+}
+
+enum ConversationStatus {
+  active
+  inactive
+  closed
+}
+
+enum MessageSender {
+  customer
+  ai
+  staff
+}
+
+enum MessageType {
+  text
+  voice
+}
+
+enum KnowledgeDocType {
+  service
+  pricing
+  faq
+  policy
+  offer
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum FollowUpTriggerReason {
+  inactive
+  abandoned_booking
+}
+
+enum RecommendationCategory {
+  follow_up
+  pricing
+  staffing
+  general
+}
+
+// --- MODELS ---
+
+model Business {
+  id               String              @id @default(cuid())
+  name             String
+  category         String
+  whatsappNumber   String
+  timezone         String              @default("Asia/Kolkata")
+  createdAt        DateTime            @default(now())
+
+  users            User[]
+  customers        Customer[]
+  conversations    Conversation[]
+  documents        KnowledgeDocument[]
+  bookings         Booking[]
+  recommendations  Recommendation[]
+  settings         Setting[]
+}
+
+model User {
+  id           String   @id @default(cuid())
+  businessId   String
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(staff)
+  createdAt    DateTime @default(now())
+
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId])
+}
+
+model Customer {
+  id             String         @id @default(cuid())
+  businessId     String
+  name           String
+  phoneNumber    String         @unique
+  firstContactAt DateTime       @default(now())
+  lastActiveAt   DateTime       @updatedAt
+  status         CustomerStatus @default(new)
+
+  business      Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+  bookings      Booking[]
+  leadScores    LeadScore[]
+  followUps     FollowUp[]
+
+  @@index([businessId])
+  @@index([status])
+}
+
+model Conversation {
+  id            String             @id @default(cuid())
+  customerId    String
+  businessId    String
+  startedAt     DateTime           @default(now())
+  lastMessageAt DateTime           @updatedAt
+  status        ConversationStatus @default(active)
+
+  customer      Customer           @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  business      Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  messages      Message[]
+  leadScores    LeadScore[]
+  followUps     FollowUp[]
+  metrics       EvaluationMetric[]
+
+  @@index([businessId])
+  @@index([customerId])
+  @@index([status])
+}
+
+model Message {
+  id             String        @id @default(cuid())
+  conversationId String
+  sender         MessageSender
+  content        String
+  timestamp      DateTime      @default(now())
+  messageType    MessageType   @default(text)
+
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([conversationId, timestamp])
+}
+
+model KnowledgeDocument {
+  id         String           @id @default(cuid())
+  businessId String
+  type       KnowledgeDocType
+  title      String
+  content    String
+  uploadedAt DateTime         @default(now())
+
+  business   Business         @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  embeddings Embedding[]
+
+  @@index([businessId])
+}
+
+/// Actual vectors live in Chroma. This table only stores chunk indexes
+/// and metadata to associate context blocks back to Postgres.
+model Embedding {
+  id                  String            @id @default(cuid())
+  knowledgeDocumentId String
+  vectorRefId         String
+  chunkText           String
+  chunkIndex          Int
+
+  document            KnowledgeDocument @relation(fields: [knowledgeDocumentId], references: [id], onDelete: Cascade)
+
+  @@index([knowledgeDocumentId])
+}
+
+model Booking {
+  id         String        @id @default(cuid())
+  customerId String
+  businessId String
+  service    String
+  dateTime   DateTime
+  status     BookingStatus @default(pending)
+  createdAt  DateTime      @default(now())
+
+  customer   Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  business   Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId])
+  @@index([customerId])
+  @@index([status])
+  @@index([dateTime])
+}
+
+model LeadScore {
+  id                 String       @id @default(cuid())
+  customerId         String
+  conversationId     String
+  intent             String
+  budget             String?
+  urgency            String?
+  sentiment          String?
+  bookingProbability Float        @default(0.0)
+  leadScore          Int          @default(0)
+  reasoning          String
+  createdAt          DateTime     @default(now())
+
+  customer           Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  conversation       Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([conversationId])
+}
+
+model Recommendation {
+  id         String                 @id @default(cuid())
+  businessId String
+  text       String
+  category   RecommendationCategory @default(general)
+  createdAt  DateTime               @default(now())
+  dismissed  Boolean                @default(false)
+
+  business   Business               @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId])
+}
+
+model FollowUp {
+  id             String                @id @default(cuid())
+  customerId     String
+  conversationId String
+  triggerReason  FollowUpTriggerReason
+  messageSent    String?
+  sentAt         DateTime?
+  converted      Boolean               @default(false)
+  createdAt      DateTime              @default(now())
+
+  customer       Customer              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  conversation   Conversation          @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([conversationId])
+}
+
+model EvaluationMetric {
+  id                String       @id @default(cuid())
+  conversationId    String
+  latencyMs         Int
+  confidence        Float
+  grounded          Boolean      @default(false)
+  escalated         Boolean      @default(false)
+  hallucinationFlag Boolean      @default(false)
+  createdAt         DateTime     @default(now())
+
+  conversation      Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+model Setting {
+  id         String   @id @default(cuid())
+  businessId String
+  key        String
+  value      String
+
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@unique([businessId, key])
+  @@index([businessId])
+}

@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%; /* Near black zinc-950 */
+    --foreground: 0 0% 98%; /* zinc-50 */
+
+    --card: 240 10% 5.9%; /* Elevated container, zinc-900 */
+    --card-foreground: 0 0% 98%;
+    --card-hover: 240 10% 8.5%; /* zinc-800 hover state */
+
+    --popover: 240 10% 5.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 250 84% 54%; /* Elegant indigo accent */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 5% 10%;
+    --muted-foreground: 240 5% 65%; /* zinc-400 equivalent */
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%; /* Red warning */
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 142.1 76.2% 45.3%; /* Green success */
+    --success-foreground: 0 0% 98%;
+
+    --warning: 38 92% 50%; /* Amber warning */
+    --warning-foreground: 0 0% 98%;
+
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 240 5.9% 12%; /* Slate/zinc-800 subtle borders */
+    --input: 240 5.9% 12%;
+    --ring: 250 84% 54%;
+
+    --radius: 8px;
+
+    /* Recharts chart color variables */
+    --chart-grid: 240 5.9% 18%;
+    --chart-tick: 240 5% 55%;
+    --tooltip-bg: 240 10% 5.9%;
+    --tooltip-border: 240 5.9% 12%;
+    --tooltip-text: 0 0% 98%;
+  }
+
+  [data-theme="light"] {
+    --background: 210 20% 98%; /* soft off-white */
+    --foreground: 222 15% 12%; /* near black */
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 15% 12%;
+    --card-hover: 210 15% 96%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 15% 12%;
+
+    --primary: 250 84% 50%; /* elegant indigo for light bg */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142.1 76.2% 36.3%; /* darker green for contrast */
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 45%; /* darker amber for contrast */
+    --warning-foreground: 210 40% 98%;
+
+    --info: 217 91% 50%; /* darker blue for contrast */
+    --info-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 250 84% 50%;
+
+    /* Recharts chart color variables */
+    --chart-grid: 220 13% 91%;
+    --chart-tick: 215 15% 47%;
+    --tooltip-bg: 0 0% 100%;
+    --tooltip-border: 220 13% 88%;
+    --tooltip-text: 222 15% 12%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Custom scrollbar matching dark mode theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.4);
+}
+
+/* Responsive Dashboard Typography */
+.db-title {
+  @apply text-xs transition-all duration-300;
+}
+[data-sidebar-collapsed="true"] .db-title {
+  @apply text-sm;
+}
+
+.db-value {
+  @apply text-2xl transition-all duration-300;
+}
+[data-sidebar-collapsed="true"] .db-value {
+  @apply text-3xl;
+}
+
+.db-mid-value {
+  @apply text-xl transition-all duration-300;
+}
+[data-sidebar-collapsed="true"] .db-mid-value {
+  @apply text-2xl;
+}
+
+.db-text {
+  @apply text-xs transition-all duration-300;
+}
+[data-sidebar-collapsed="true"] .db-text {
+  @apply text-sm;
+}
+
+.db-subtext {
+  @apply text-[10px] transition-all duration-300;
+}
+[data-sidebar-collapsed="true"] .db-subtext {
+  @apply text-[11px];
+}
+
+.db-label {
+  @apply text-[9px] transition-all duration-300;
+}
+[data-sidebar-collapsed="true"] .db-label {
+  @apply text-[10px];
+}
+
