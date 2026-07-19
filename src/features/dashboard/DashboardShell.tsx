@@ -15,7 +15,7 @@ import { useTheme } from "../../components/ThemeProvider"
 import { CommandPalette } from "../../components/CommandPalette"
 
 // Import views
-import { LeadsView, initialLeads, type LeadItem } from "../leads/LeadsView"
+import { LeadsView, type LeadItem } from "../leads/LeadsView"
 import { ConversationsView } from "../conversations/ConversationsView"
 import { BookingsView, type BookingItem } from "../bookings/BookingsView"
 import { AnalyticsView } from "../analytics/AnalyticsView"
@@ -28,6 +28,7 @@ import {
   activityFeed,
   bookings,
   recommendations,
+  initialLeads,
 } from "./mockData"
 
 import type {

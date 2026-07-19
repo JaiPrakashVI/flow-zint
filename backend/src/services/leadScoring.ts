@@ -7,8 +7,7 @@ const DEBOUNCE_MS = 30000 // 30 seconds debounce
 
 export async function triggerLeadScoring(
   conversationId: string,
-  customerId: string,
-  businessId: string
+  customerId: string
 ): Promise<void> {
   const now = Date.now()
   const lastScoredTime = lastScoredCache.get(conversationId) || 0

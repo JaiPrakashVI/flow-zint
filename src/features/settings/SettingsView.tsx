@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { initialKnowledgeDocuments } from "../dashboard/mockData"
 import { Badge } from "../../components/ui/badge"
 import { Button } from "../../components/ui/button"
@@ -53,7 +53,7 @@ export function SettingsView({ isDemoMode = false }: { isDemoMode?: boolean }) {
       .catch(err => console.error("Failed to load business profile:", err))
   }, [isDemoMode])
 
-  const fetchDocs = () => {
+  const fetchDocs = useCallback(() => {
     if (isDemoMode) return
     apiClient.get("/api/business/knowledge")
       .then(res => {
@@ -67,12 +67,12 @@ export function SettingsView({ isDemoMode = false }: { isDemoMode?: boolean }) {
         setDocuments(docs)
       })
       .catch(err => console.error("Failed to fetch documents:", err))
-  }
+  }, [isDemoMode])
 
   // Fetch documents on mount
   useEffect(() => {
     fetchDocs()
-  }, [isDemoMode])
+  }, [fetchDocs])
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault()

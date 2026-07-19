@@ -14,6 +14,9 @@ export function useChartColors() {
   }, [theme])
 
   return useMemo(() => {
+    // Reference dependencies to trigger re-computation when theme or tick changes
+    const _deps = { theme, tick }
+    void _deps
     const root = document.documentElement
     const style = getComputedStyle(root)
 

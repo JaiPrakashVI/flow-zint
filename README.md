@@ -105,26 +105,48 @@ Built in 9 phases, deterministic plumbing before AI, AI before polish — full d
 ## Local Setup
 
 ### Prerequisites
-Node.js 18+, PostgreSQL, a WhatsApp Business Cloud API test number (Meta developer account), an OpenAI or Claude API key.
+Node.js 18+, PostgreSQL (e.g., Neon), a WhatsApp Business Cloud API test number, and an OpenAI API key (optional; mocked if empty).
 
 ```bash
-# Backend
-cd server
+# 1. Setup Backend
+cd backend
 npm install
-cp .env.example .env   # DATABASE_URL, JWT_SECRET, WHATSAPP_*, LLM API key
+cp .env.example .env   # Configure DATABASE_URL, JWT_SECRET, etc.
 npx prisma migrate dev
-npx prisma db seed
+npm run db:seed        # Seeds default business and admin (admin@vedawellness.com / admin123)
 npm run dev
 
-# Frontend
-cd ../client
+# 2. Setup Frontend (from the root directory in a new terminal)
 npm install
-cp .env.example .env   # VITE_API_BASE_URL
+cp .env.example .env   # Configure VITE_API_URL
 npm run dev
 ```
 
-**Backend env:** `DATABASE_URL`, `JWT_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `OPENAI_API_KEY`, `CHROMA_URL`
-**Frontend env:** `VITE_API_BASE_URL`
+**Backend env:** `DATABASE_URL`, `JWT_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `OPENAI_API_KEY`
+**Frontend env:** `VITE_API_URL`
+
+---
+
+## Verification & Tests
+
+### 1. Code Quality & Linting
+Verify code conformity and linter compliance using Oxlint:
+```bash
+npm run lint
+```
+
+### 2. Automated Smoke Tests
+Validate server booting, database connection, login auth APIs, and core dashboard endpoints:
+```bash
+cd backend
+npm run test
+```
+
+### 3. Production Build Validation
+Confirm the React frontend compiles cleanly:
+```bash
+npm run build
+```
 
 ---
 

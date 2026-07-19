@@ -21,7 +21,7 @@ export function authenticateToken(req: UserRequest, res: Response, next: NextFun
     req.userId = decoded.userId
     req.userEmail = decoded.email
     next()
-  } catch (error) {
+  } catch {
     return res.status(403).json({ error: "Invalid or expired token" })
   }
 }

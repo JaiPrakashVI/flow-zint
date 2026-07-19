@@ -58,7 +58,6 @@ export function CommandPalette({
     }
   }, [isOpen])
 
-  if (!isOpen) return null
 
   // Define static commands
   const pages: CommandItem[] = [
@@ -138,6 +137,8 @@ export function CommandPalette({
 
   // Track absolute index across categories
   let absoluteIndex = 0
+
+  if (!isOpen) return null
 
   return (
     <div

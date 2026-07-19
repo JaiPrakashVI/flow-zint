@@ -32,7 +32,7 @@ async function runSeed() {
       businessId: biz.id,
       email: "admin@vedawellness.com",
       name: "Veda Admin",
-      passwordHash: "$2b$10$7edb633a0e4b4708986a2ec0c20727c7edb633a0e4b4708986a2" // admin123 hash
+      passwordHash: "$2b$10$8Cvj8iHTcEq3IMpFWC9hOegmwgufs72lyxjlcZdh254RUdD.7g8Gu" // admin123 hash
     }
   })
   console.log("Created User Admin:", admin)

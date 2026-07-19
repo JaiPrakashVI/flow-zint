@@ -136,7 +136,7 @@ ${contextText || "No context available."}`
     }
 
     // 6. Save AI Message in DB
-    const aiMessage = await prisma.message.create({
+    await prisma.message.create({
       data: {
         conversationId,
         sender: "ai",
@@ -165,7 +165,7 @@ ${contextText || "No context available."}`
     console.log(`[AI Pipeline] AI Reply successfully completed. Latency: ${latencyMs}ms. Metric logged.`)
 
     // 9. Trigger background Lead Scoring Analysis (debounced)
-    await triggerLeadScoring(conversationId, customerId, businessId)
+    await triggerLeadScoring(conversationId, customerId)
 
   } catch (error) {
     console.error("[AI Pipeline] Failed to execute background RAG flow:", error)
@@ -210,7 +210,6 @@ export async function handleInboundMessage(req: Request, res: Response) {
 
     const fromPhone = messageData.from
     const contactName = contactData?.profile?.name || "WhatsApp Client"
-    const messageId = messageData.id
     const rawTimestamp = messageData.timestamp ? parseInt(messageData.timestamp) : Math.floor(Date.now() / 1000)
     const displayPhoneNumber = value.metadata?.display_phone_number || ""
 

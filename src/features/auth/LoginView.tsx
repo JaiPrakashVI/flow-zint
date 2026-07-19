@@ -42,7 +42,7 @@ export function LoginView({ onLoginSuccess }: LoginViewProps) {
         localStorage.setItem("flowpilot_jwt", regRes.token)
         setIsLoading(false)
         onLoginSuccess()
-      } catch (regErr: any) {
+      } catch {
         setError(err.message || "Authentication failed.")
         setIsLoading(false)
       }
