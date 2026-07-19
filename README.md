@@ -1,114 +1,117 @@
 # FlowPilot
 
-**Autonomous Revenue Intelligence Platform for Small Businesses**
+### Autonomous Revenue Intelligence Platform for Small Businesses
 
-Built for FlowZint AI Hackathon 2026 — Open Innovation category.
-
-FlowPilot isn't a chatbot. It's an AI employee that helps small business owners earn more revenue through intelligent WhatsApp conversations, automatic lead qualification, booking automation, follow-ups, and live business insights — without stopping after it answers a question.
+*Built for FlowZint AI Hackathon 2026 — Open Innovation*
 
 ---
 
-## What It Does
+Most AI hackathon submissions are a chatbot wrapped around an LLM call. FlowPilot isn't that.
 
-A customer messages the business on WhatsApp. FlowPilot:
+It's an AI employee: a system that answers customers on WhatsApp, scores every lead with visible reasoning, books appointments through real function calling, follows up automatically when a customer goes quiet, and reports on its own reliability — all while the business owner watches it happen live on a dashboard, not a demo mockup.
 
-1. Understands the question and retrieves accurate answers from the business's own knowledge base (RAG — never hallucinates pricing or availability)
-2. Scores the lead automatically (intent, urgency, sentiment, booking probability) with visible, human-readable reasoning
-3. Books appointments directly via function calling when the customer is ready
-4. Follows up automatically if the customer goes quiet
-5. Surfaces everything live on a dashboard the business owner can actually use
-
-Everything except the customer's reply happens asynchronously in the background — lead scoring, dashboard updates, and recommendations never slow down the chat response.
+**[→ Try the live demo — no login required](https://flow-zint.vercel.app/)** — click "View Live Demo" on the landing page
 
 ---
 
-## Tech Stack
+## Why This Is Different
 
-**Frontend:** React, Vite, TypeScript, Tailwind CSS, shadcn/ui, Recharts, Framer Motion
-**Backend:** Node.js, Express, Prisma, PostgreSQL
-**AI:** OpenAI/Claude for chat + structured extraction, `text-embedding-3-small` for embeddings, Chroma for vector search
-**Messaging:** WhatsApp Cloud API
-**Auth:** JWT
-**Deployment:** Docker, Render/Railway/VPS
+| | Typical hackathon chatbot | FlowPilot |
+|---|---|---|
+| **Answering** | LLM answers from general knowledge, may guess | Strictly RAG-grounded — if it's not in the business's uploaded docs, it says so and escalates, never invents pricing or availability |
+| **Lead data** | A raw score, if any | Every lead score ships with human-readable reasoning ("asked pricing twice, positive sentiment, returning customer") — the owner sees *why*, not just a number |
+| **Reliability** | Unmeasured | A dedicated Evaluation Engine tracks latency, confidence, grounded-response rate, and hallucination rate on every AI turn, visible in the dashboard |
+| **Architecture** | Usually synchronous, blocking | Customer only ever waits on the reply itself — scoring, dashboard updates, recommendations, and follow-ups all run async in the background |
+| **Judge access** | Sign up, wait for approval, or a broken demo account | One click, fully seeded, realistic data, zero friction |
+| **Booking** | Often faked or just a form | Real function-calling: the LLM calls `bookAppointment()`, the backend checks actual availability, the booking is real before the confirmation is ever sent |
+| **Build process** | Single long AI-generated blob | Built in 9 disciplined phases against a written system design doc (`/docs`) — plumbing before AI, AI before polish |
+
+---
+
+## See It Live
+
+**Demo (no login):** [flow-zint.vercel.app](https://flow-zint.vercel.app/) — click "View Live Demo"
+**Full account:** `/login`
+
+Watch the actual loop this product is built around:
+
+```
+WhatsApp message → grounded AI reply → dashboard updates live
+   → lead scored with visible reasoning → booking created via function call
+   → revenue/KPIs update → AI surfaces a recommendation
+```
+
+No step in that sequence is scripted or faked for the demo — it's the same pipeline running against real seeded data. Full walkthrough in `/docs/demo-script.md`.
 
 ---
 
 ## Core Features
 
-- **WhatsApp AI Assistant** — RAG-grounded replies, no hallucinated pricing or availability
-- **Lead Intelligence** — structured scoring (intent, budget, urgency, sentiment, booking probability) with visible reasoning per lead, not just a bare number
-- **Booking Automation** — LLM function-calling triggers real availability checks and confirmed bookings
+- **WhatsApp AI Assistant** — RAG-grounded, never hallucinates pricing or availability, escalates honestly when it doesn't know
+- **Lead Intelligence** — intent, urgency, sentiment, budget, booking probability, and *reasoning* — always visible, never a black box
+- **Booking via Function Calling** — real availability checks, real double-booking protection, no LLM-fabricated confirmations
 - **Follow-up Engine** — automatic, personalized re-engagement for inactive customers
-- **Live Dashboard** — revenue opportunity, hot leads, conversion rate, AI confidence, lead funnel, AI activity feed
-- **Evaluation Engine** — tracks its own latency, confidence, grounded-response rate, and hallucination rate
-- **No-login Demo Mode** — full product experience with realistic seeded data, no signup required
-- **Light + dark theme**, collapsible sidebar navigation
+- **Live Dashboard** — revenue opportunity, hot leads, conversion rate, AI confidence, lead funnel, live AI activity feed
+- **Evaluation Engine** — the system reports on its own latency, confidence, groundedness, and hallucination rate
+- **No-login demo mode** with fully realistic seeded data
+- **Light + dark theme**, collapsible sidebar navigation, built to feel like production software, not a prototype
 
 ---
 
-## Project Structure
+## Tech Stack
 
-```
-/docs                   → Project Bible (read these before making changes)
-  vision.md              → product vision, philosophy, non-goals
-  architecture.md         → system flow, stack, latency principles, build order
-  database.md             → full data model reference
-  api.md                  → endpoint specification
-  ui.md                   → design system + page-by-page UI spec
-  demo-script.md          → the live demo flow and fallback plan
-
-/src (frontend)
-  features/               → feature-based structure (dashboard, leads, conversations, bookings, analytics, settings, auth)
-  components/ui/          → shared primitives (Card, Badge, StatusPill, TrendIndicator, Logo)
-  lib/                    → API client, mock data, utilities
-
-/server (backend)
-  features/               → auth, business, customers, conversations, bookings, dashboard, webhooks
-  prisma/                 → schema.prisma, migrations, seed.ts
-```
+**Frontend:** React · Vite · TypeScript · Tailwind CSS · shadcn/ui · Recharts · Framer Motion
+**Backend:** Node.js · Express · Prisma · PostgreSQL
+**AI:** OpenAI/Claude · `text-embedding-3-small` · Chroma (vector search)
+**Messaging:** WhatsApp Cloud API
+**Auth:** JWT · **Deployment:** Vercel (frontend), Docker / Render / Railway (backend)
 
 ---
 
-## Database
+## System Design
 
-13 core tables: Business, Users, Customers, Conversations, Messages, KnowledgeDocuments, Embeddings, Bookings, LeadScores, Recommendations, FollowUps, EvaluationMetrics, Settings. Full schema and relations documented in `/docs/database.md`.
+FlowPilot was designed before it was built. The full system design lives in [`/docs`](./docs):
+
+- [`vision.md`](./docs/vision.md) — product philosophy and explicit non-goals
+- [`architecture.md`](./docs/architecture.md) — system flow, async latency model, phase-by-phase build order
+- [`database.md`](./docs/database.md) — full 13-table data model
+- [`api.md`](./docs/api.md) — endpoint specification
+- [`ui.md`](./docs/ui.md) — design system and page-by-page UI spec
+- [`demo-script.md`](./docs/demo-script.md) — the exact live demo flow and fallback plan
+
+### The One Rule That Shaped Everything
+> The customer should only wait for document retrieval and the LLM reply. Everything else — lead scoring, dashboard updates, recommendations, follow-ups, evaluation logging — runs in the background.
+
+This single constraint is why the product feels instant instead of janky, and it's enforced end-to-end, not just claimed.
 
 ---
 
 ## Build Order
 
-This project was built in strict phase order — deterministic plumbing first, AI last:
+Built in 9 phases, deterministic plumbing before AI, AI before polish — full detail in `architecture.md`:
 
-1. Design system + Dashboard UI (mock data)
-2. Remaining pages: Login, Leads, Conversations, Bookings, Analytics, Settings (mock data)
-3. Database schema (Prisma)
-4. Backend APIs (Auth → Business → Customers → Conversations → Bookings → Dashboard)
-5. WhatsApp webhook (message persistence only, no AI)
-6. RAG pipeline (embeddings, vector search, grounded LLM replies)
-7. Lead intelligence (structured scoring + reasoning)
-8. Booking via function calling
-9. Wire frontend to real APIs
-10. Evaluation engine + demo polish
-
-Full detail on each phase is in `/docs/architecture.md`.
+1. Design system + UI shell (mock data)
+2. Database schema
+3. Backend APIs
+4. WhatsApp webhook (message persistence only — no AI yet)
+5. RAG pipeline (embeddings, vector search, grounded replies)
+6. Lead intelligence (structured scoring + reasoning)
+7. Booking via function calling
+8. Wire frontend to real APIs
+9. Evaluation engine + demo polish
 
 ---
 
 ## Local Setup
 
 ### Prerequisites
-- Node.js 18+
-- PostgreSQL
-- A WhatsApp Business Cloud API test number (Meta developer account)
-- OpenAI or Claude API key
-
-### Install
+Node.js 18+, PostgreSQL, a WhatsApp Business Cloud API test number (Meta developer account), an OpenAI or Claude API key.
 
 ```bash
 # Backend
 cd server
 npm install
-cp .env.example .env   # fill in DATABASE_URL, JWT_SECRET, WHATSAPP_*, LLM API key
+cp .env.example .env   # DATABASE_URL, JWT_SECRET, WHATSAPP_*, LLM API key
 npx prisma migrate dev
 npx prisma db seed
 npm run dev
@@ -116,33 +119,22 @@ npm run dev
 # Frontend
 cd ../client
 npm install
-cp .env.example .env   # fill in API base URL
+cp .env.example .env   # VITE_API_BASE_URL
 npm run dev
 ```
 
-### Environment Variables
-
-**Backend:** `DATABASE_URL`, `JWT_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `OPENAI_API_KEY` (or equivalent LLM key), `CHROMA_URL`
-
-**Frontend:** `VITE_API_BASE_URL`
+**Backend env:** `DATABASE_URL`, `JWT_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `OPENAI_API_KEY`, `CHROMA_URL`
+**Frontend env:** `VITE_API_BASE_URL`
 
 ---
 
-## Demo
+## What's Deliberately Not Here
 
-- **Live demo (no login required):** `/demo` — click "View Live Demo" from the landing page
-- **Full account login:** `/login`
-
-The demo flow: a WhatsApp message comes in, AI replies grounded in the business's real knowledge base, the dashboard updates live, a lead score appears with visible reasoning, a booking gets created via function calling, and revenue/KPIs update — all in one continuous, unscripted sequence. Full walkthrough and fallback plan in `/docs/demo-script.md`.
+No CRM/Email/Instagram integrations, no multi-agent visualizer, no 3D graphics, no fake or hardcoded AI responses. Every one of these was a conscious scope decision, not a missed feature — see `/docs/vision.md` for the reasoning. Small, sharp, and real beats broad and fake.
 
 ---
 
-## Non-Goals (by design, not oversight)
+## Author
 
-No generic chatbot UX, no CRM/Email/Instagram integrations, no multi-agent visualizer, no fake or hardcoded AI responses. See `/docs/vision.md` for the full list and reasoning.
-
----
-
-## Hackathon
-
-Built solo for FlowZint AI Hackathon 2026 (Open Innovation category). Submission via [flowzint.in/2026/ai/hackothon](https://flowzint.in/2026/ai/hackothon).
+Built solo by Jai Prakash for FlowZint AI Hackathon 2026 (Open Innovation).
+[GitHub](https://github.com/JaiPrakashVI) · [LinkedIn](https://linkedin.com/in/jai-prakash-/)
