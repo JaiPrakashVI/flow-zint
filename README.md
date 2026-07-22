@@ -158,5 +158,5 @@ No CRM/Email/Instagram integrations, no multi-agent visualizer, no 3D graphics, 
 
 ## Author
 
-Built solo by Jai Prakash for FlowZint AI Hackathon 2026 (Open Innovation).
+Built solo by Jai Prakash for FlowZint AI Hackathon 2026 (Open Innovation)
 [GitHub](https://github.com/JaiPrakashVI) · [LinkedIn](https://linkedin.com/in/jai-prakash-/)
